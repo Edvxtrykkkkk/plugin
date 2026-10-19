@@ -46,6 +46,18 @@ GUI["GUI_ScreenGui"]["ResetOnSpawn"] = true
 GUI["GUI_ScreenGui"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
 GUI["GUI_ScreenGui"]["Parent"] = host
 
+local function generateName()
+    local bytes = {}
+
+    for i = 1, 32 do
+        bytes[i] = string.char(math.random(0, 255))
+    end
+
+    return "_narsedv_" .. table.concat(bytes)
+end
+
+GUI["GUI_ScreenGui"]["Name"] = generateName()
+
 -- ImageButton: OpenBtn
 GUI["GUI_OpenBtn"] = Instance.new("ImageButton")
 GUI["GUI_OpenBtn"]["Name"] = "OpenBtn"
