@@ -382,6 +382,7 @@ local chunk1, holder1 = compile(
 	"LocalScript",
 	GUI["GUI_ScreenGui"],
 	[[
+
 --!strict
 
 local Players = game:GetService("Players")
@@ -446,6 +447,12 @@ local AppList = {
 		TextLabel = "FLY GUI",
 		RawLink = "https://raw.githubusercontent.com/narakuhub/plugin-tools/refs/heads/main/tools/flygui.lua",
 	},
+	{
+		App = "TOOLBOX",
+		Icon = "rbxassetid://79190391061047",
+		TextLabel = "TOOLBOX",
+		RawLink = "https://raw.githubusercontent.com/Edvxtrykkkkk/plugin/refs/heads/main/pluginbeta.lua",
+	},
 }
 
 local OPEN_TEXT = "N'EDV"
@@ -458,15 +465,15 @@ local CLOSED_RADIUS = UDim.new(0, 3)
 local OPEN_RADIUS = UDim.new(0, 0)
 
 local OPEN_TWEEN = TweenInfo.new(
-0.22,
-Enum.EasingStyle.Quart,
-Enum.EasingDirection.Out
+	0.22,
+	Enum.EasingStyle.Quart,
+	Enum.EasingDirection.Out
 )
 
 local CLOSE_TWEEN = TweenInfo.new(
-0.18,
-Enum.EasingStyle.Quart,
-Enum.EasingDirection.In
+	0.18,
+	Enum.EasingStyle.Quart,
+	Enum.EasingDirection.In
 )
 
 local isOpen = false
@@ -475,46 +482,46 @@ local isAnimating = false
 local appData: {[TextButton]: any} = {}
 
 local function warnError(message: string)
-warn("[N'EDV] " .. message)
+	warn("[N'EDV] " .. message)
 end
 
 local function generateName(): string
-local bytes = {}
+	local bytes = {}
 
-for i = 1, 32 do
-	bytes[i] = string.char(math.random(0, 255))
-end
+	for i = 1, 32 do
+		bytes[i] = string.char(math.random(0, 255))
+	end
 
-return "_narsedv_" .. table.concat(bytes)
+	return "_narsedv_" .. table.concat(bytes)
 end
 
 local function randomizeGuiNames(root: Instance)
-for _, instance in ipairs(root:GetDescendants()) do
-	instance.Name = generateName()
-end
+	for _, instance in ipairs(root:GetDescendants()) do
+		instance.Name = generateName()
+	end
 
-root.Name = generateName()
+	root.Name = generateName()
 end
 
 local function setCornerRadius(radius: UDim)
-TweenService:Create(
-OpenCorner,
-OPEN_TWEEN,
-{
-BottomLeftRadius = radius,
-BottomRightRadius = radius,
-}
-):Play()
+	TweenService:Create(
+		OpenCorner,
+		OPEN_TWEEN,
+		{
+			BottomLeftRadius = radius,
+			BottomRightRadius = radius,
+		}
+	):Play()
 end
 
 local function setOpenTransparency(transparency: number)
-TweenService:Create(
-Open,
-OPEN_TWEEN,
-{
-BackgroundTransparency = transparency,
-}
-):Play()
+	TweenService:Create(
+		Open,
+		OPEN_TWEEN,
+		{
+			BackgroundTransparency = transparency,
+		}
+	):Play()
 end
 
 local CanvasScale = CanvasGroup:FindFirstChildOfClass("UIScale")
@@ -537,141 +544,141 @@ Scale.Scale = 0
 setCornerRadius(CLOSED_RADIUS)
 
 local function togglePanel()
-if isAnimating then
-	return
-end
+	if isAnimating then
+		return
+	end
 
-isAnimating = true
-isOpen = not isOpen
+	isAnimating = true
+	isOpen = not isOpen
 
-local opening = isOpen
-local tweenInfo = if opening then OPEN_TWEEN else CLOSE_TWEEN
+	local opening = isOpen
+	local tweenInfo = if opening then OPEN_TWEEN else CLOSE_TWEEN
 
-if opening then
-	CanvasGroup.Visible = true
-	Open.Text = CLOSE_TEXT
+	if opening then
+		CanvasGroup.Visible = true
+		Open.Text = CLOSE_TEXT
 
-	setCornerRadius(OPEN_RADIUS)
-	setOpenTransparency(OPEN_BACKGROUND_TRANSPARENCY)
-end
+		setCornerRadius(OPEN_RADIUS)
+		setOpenTransparency(OPEN_BACKGROUND_TRANSPARENCY)
+	end
 
-local scaleTween = TweenService:Create(
-Scale,
-tweenInfo,
-{
-Scale = if opening then 1 else 0,
-}
-)
+	local scaleTween = TweenService:Create(
+		Scale,
+		tweenInfo,
+		{
+			Scale = if opening then 1 else 0,
+		}
+	)
 
-local fadeTween = TweenService:Create(
-CanvasGroup,
-tweenInfo,
-{
-GroupTransparency = if opening then 0 else 1,
-}
-)
+	local fadeTween = TweenService:Create(
+		CanvasGroup,
+		tweenInfo,
+		{
+			GroupTransparency = if opening then 0 else 1,
+		}
+	)
 
-scaleTween:Play()
-fadeTween:Play()
-scaleTween.Completed:Wait()
+	scaleTween:Play()
+	fadeTween:Play()
+	scaleTween.Completed:Wait()
 
-if not opening then
-	CanvasGroup.Visible = false
-	Open.Text = OPEN_TEXT
+	if not opening then
+		CanvasGroup.Visible = false
+		Open.Text = OPEN_TEXT
 
-	setCornerRadius(CLOSED_RADIUS)
-	setOpenTransparency(CLOSED_BACKGROUND_TRANSPARENCY)
-end
+		setCornerRadius(CLOSED_RADIUS)
+		setOpenTransparency(CLOSED_BACKGROUND_TRANSPARENCY)
+	end
 
-isAnimating = false
+	isAnimating = false
 end
 
 Open.Activated:Connect(togglePanel)
 
 local function resolveHost(): Instance
-local getHiddenUi =
-executorEnv.gethui or executorEnv.get_hidden_gui
+	local getHiddenUi =
+		executorEnv.gethui or executorEnv.get_hidden_gui
 
-if type(getHiddenUi) == "function" then
-	local ok, result = pcall(getHiddenUi)
+	if type(getHiddenUi) == "function" then
+		local ok, result = pcall(getHiddenUi)
+
+		if ok and typeof(result) == "Instance" then
+			return result
+		end
+	end
+
+	local ok, result = pcall(function()
+		return game:GetService("CoreGui")
+	end)
 
 	if ok and typeof(result) == "Instance" then
 		return result
 	end
-end
 
-local ok, result = pcall(function()
-return game:GetService("CoreGui")
-end)
-
-if ok and typeof(result) == "Instance" then
-	return result
-end
-
-return Players.LocalPlayer:WaitForChild("PlayerGui")
+	return Players.LocalPlayer:WaitForChild("PlayerGui")
 end
 
 local Host = ScreenGui.Parent or resolveHost()
 
 local function executeApp(app: TextButton)
-local data = appData[app]
+	local data = appData[app]
 
-if not data then
-	return
-end
+	if not data then
+		return
+	end
 
-if type(data.RawLink) ~= "string" or data.RawLink == "" then
-	warnError("RawLink belum ditentukan: " .. tostring(data.App))
-	return
-end
+	if type(data.RawLink) ~= "string" or data.RawLink == "" then
+		warnError("RawLink belum ditentukan: " .. tostring(data.App))
+		return
+	end
 
-local success, result = pcall(function()
-local source = game:HttpGet(data.RawLink)
-local compiler = executorEnv.loadstring or loadstring
+	local success, result = pcall(function()
+		local source = game:HttpGet(data.RawLink)
+		local compiler = executorEnv.loadstring or loadstring
 
-if type(compiler) ~= "function" then
-	error("loadstring tidak tersedia")
-end
+		if type(compiler) ~= "function" then
+			error("loadstring tidak tersedia")
+		end
 
-local chunk, compileError = compiler(source)
+		local chunk, compileError = compiler(source)
 
-if type(chunk) ~= "function" then
-	error(tostring(compileError or "Gagal compile script"))
-end
+		if type(chunk) ~= "function" then
+			error(tostring(compileError or "Gagal compile script"))
+		end
 
-chunk()
-end)
+		chunk()
+	end)
 
-if not success then
-	warnError(tostring(data.App) .. ": " .. tostring(result))
-end
+	if not success then
+		warnError(tostring(data.App) .. ": " .. tostring(result))
+	end
 end
 
 Template.Visible = false
 
 for index, data in ipairs(AppList) do
 	local success, result = pcall(function()
-	local app = Template:Clone()
+		local app = Template:Clone()
 
-	app.Name = data.App
-	app.LayoutOrder = index
+		app.Name = data.App
+		app.LayoutOrder = index
 
-	local icon = app:WaitForChild("Icon") :: ImageLabel
-	local label = app:WaitForChild("TextLabel") :: TextLabel
+		local icon = app:WaitForChild("Icon") :: ImageLabel
+		local label = app:WaitForChild("TextLabel") :: TextLabel
 
-	icon.Image = data.Icon
+		icon.Image = data.Icon
 
-	label.Text = data.TextLabel
-	label.TextTruncate = Enum.TextTruncate.AtEnd
-	label.TextWrapped = false
+		label.Text = data.TextLabel
+		label.TextTruncate = Enum.TextTruncate.AtEnd
+		label.TextWrapped = false
 
-	appData[app] = data
-	app.Parent = ScrollingFrame
-	app.Visible = true
+		appData[app] = data
+		app.Parent = ScrollingFrame
+		app.Visible = true
 
-	app.Activated:Connect(function()
-	executeApp(app)
-	end)
+		app.Activated:Connect(function()
+			executeApp(app)
+		end)
 	end)
 
 	if not success then
@@ -680,15 +687,15 @@ for index, data in ipairs(AppList) do
 end
 
 local function updateCanvas()
-local height = Grid.AbsoluteContentSize.Y
-local padding = ScrollingFrame:FindFirstChildOfClass("UIPadding")
+	local height = Grid.AbsoluteContentSize.Y
+	local padding = ScrollingFrame:FindFirstChildOfClass("UIPadding")
 
-if padding then
-	height += padding.PaddingTop.Offset
-	height += padding.PaddingBottom.Offset
-end
+	if padding then
+		height += padding.PaddingTop.Offset
+		height += padding.PaddingBottom.Offset
+	end
 
-ScrollingFrame.CanvasSize = UDim2.fromOffset(0, height)
+	ScrollingFrame.CanvasSize = UDim2.fromOffset(0, height)
 end
 
 Grid:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
